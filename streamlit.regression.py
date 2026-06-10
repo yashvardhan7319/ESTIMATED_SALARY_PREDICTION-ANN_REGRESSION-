@@ -49,7 +49,10 @@ is_active_member = st.selectbox(
     [0, 1]
 )
 
-estimated_salary = st.number_input('Estimated Salary')
+exited = st.selectbox(
+    'Exited',
+    [0, 1]
+)
 
 # Prepare input data
 input_data = pd.DataFrame({
@@ -61,7 +64,7 @@ input_data = pd.DataFrame({
     'NumOfProducts': [num_of_products],
     'HasCrCard': [has_cr_card],
     'IsActiveMember': [is_active_member],
-    'EstimatedSalary': [estimated_salary]
+    'Exited': [exited]
 })
 
 # One-hot encode Geography
@@ -78,15 +81,33 @@ input_data = pd.concat(
     axis=1
 )
 
+# Reorder columns to match scaler training
+input_data = input_data[
+    [
+        'CreditScore',
+        'Gender',
+        'Age',
+        'Tenure',
+        'Balance',
+        'NumOfProducts',
+        'HasCrCard',
+        'IsActiveMember',
+        'Exited',
+        'Geography_France',
+        'Geography_Germany',
+        'Geography_Spain'
+    ]
+]
+
 # Scale input data
 input_scaled = scaler.transform(input_data)
 
-# Predict estimated salary
-if st.button("Predict Estimated Salary"):
+# Predict
+if st.button("Predict"):
 
     prediction = model.predict(input_scaled)
-    predicted_salary = prediction[0][0]
+    prediction_value = prediction[0][0]
 
-    st.write(f'Predicted Estimated Salary: ${predicted_salary:,.2f}')
+    st.write(f'Prediction: {prediction_value:.4f}')
 
-    st.success("The estimated salary has been predicted.")
+    st.success("Prediction completed successfully.")
